@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Urban Cab{% endblock %}
+{% block topbar %}
+<div class="topbar">
+  <span class="t-logo">UC</span>
+  <span class="t-title">Urban Cab</span>
+</div>
+{% endblock %}
+{% block content %}
+<div style="text-align:center;padding:60px 24px 40px">
+  <div style="font-size:56px;margin-bottom:16px">🚗</div>
+  <h1 style="font-size:26px;font-weight:700;color:var(--tx)">Urban Cab</h1>
+  <p style="font-size:14px;color:var(--tx3);margin-top:8px;line-height:1.6">Fast, reliable rides<br>around Maseru CBD</p>
+</div>
+<div style="padding:0 24px;display:flex;flex-direction:column;gap:12px">
+  <a href="/book" class="btn btn-primary btn-full btn-lg">
+    Book a Ride — No account needed
+  </a>
+  <a href="/login" class="btn btn-ghost btn-full">Driver / Admin Login</a>
+</div>
+<div style="padding:32px 24px;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border-radius:12px;border:1px solid var(--bd)">
+    <span style="font-size:24px">📍</span>
+    <div><div style="font-size:13px;font-weight:600">Just tell us where</div><div style="font-size:11.5px;color:var(--tx3);margin-top:2px">Select pickup and destination from Maseru CBD stops</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border-radius:12px;border:1px solid var(--bd)">
+    <span style="font-size:24px">📱</span>
+    <div><div style="font-size:13px;font-weight:600">Leave your number</div><div style="font-size:11.5px;color:var(--tx3);margin-top:2px">Driver will contact you directly</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--s1);border-radius:12px;border:1px solid var(--bd)">
+    <span style="font-size:24px">💵</span>
+    <div><div style="font-size:13px;font-weight:600">Pay the driver directly</div><div style="font-size:11.5px;color:var(--tx3);margin-top:2px">Cash, Mobile Money, or Card on Delivery</div></div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Payments{% endblock %}
+{% block topbar %}<div class="topbar"><a href="/admin" class="t-back">â† Back</a><span class="t-title" style="text-align:center">Payments</span><span class="role-pill rp-admin">Admin</span></div>{% endblock %}
+{% block content %}
+<div style="padding-bottom:3rem">
+  <form method="GET" action="/admin/payments">
+    <div class="sbar">
+      <div class="iw" style="flex:1"><span class="ico" style="font-size:13px">ðŸ”</span><input class="inp" type="text" name="q" value="{{ search }}" placeholder="Ride ID, passenger, driverâ€¦" style="padding-left:34px;min-height:40px;font-size:13px;border-radius:8px"></div>
+      <button type="submit" class="find">Find</button>
+    </div>
+    <div class="fpanel">
+      <div class="fld-row">
+        <div class="fld"><div class="lbl" style="font-size:10px">Status</div><div class="sw"><select class="sel" name="status" style="min-height:36px;padding:7px 28px 7px 10px;font-size:12px"><option value="">All Statuses</option>{% for s in ['PENDING','COMPLETED','CANCELLED'] %}<option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div></div>
+        <div class="fld"><div class="lbl" style="font-size:10px">Method</div><div class="sw"><select class="sel" name="method_id" style="min-height:36px;padding:7px 28px 7px 10px;font-size:12px"><option value="">All Methods</option>{% for pm in methods %}<option value="{{ pm.payment_method_id }}" {% if method_id|string==pm.payment_method_id|string %}selected{% endif %}>{{ pm.method_name }}</option>{% endfor %}</select></div></div>
+      </div>
+      <div class="fld-row">
+        <div class="fld"><div class="lbl" style="font-size:10px">From</div><input class="inp" type="date" name="date_from" value="{{ date_from }}" style="min-height:36px;padding:7px 10px;font-size:12px"></div>
+        <div class="fld"><div class="lbl" style="font-size:10px">To</div><input class="inp" type="date" name="date_to" value="{{ date_to }}" style="min-height:36px;padding:7px 10px;font-size:12px"></div>
+      </div>
+      <div class="ffoot"><button type="submit" class="btn btn-primary">Apply</button><a href="/admin/payments" class="btn btn-ghost">Clear</a></div>
+    </div>
+  </form>
+
+  <div class="sgrid">
+    <div class="scard"><div class="sv text-green">{{ summary.completed or 0 }}</div><div class="sl">Completed</div></div>
+    <div class="scard"><div class="sv" style="color:var(--orange)">{{ summary.pending or 0 }}</div><div class="sl">Pending</div></div>
+    <div class="scard"><div class="sv text-red">{{ summary.cancelled or 0 }}</div><div class="sl">Cancelled</div></div>
+    <div class="scard"><div class="sv" style="font-size:20px">M {{ '%.2f'|format(summary.revenue or 0) }}</div><div class="sl">Revenue</div></div>
+  </div>
+
+  <div class="sh">{{ payments|length }} payment record(s)</div>
+  {% for p in payments %}
+  <div class="rc" style="margin-bottom:8px">
+    <div class="rc-h">
+      <div class="rc-r">
+        <div class="rrow"><div class="du"></div>{{ p.pickup_name }}</div>
+        <div class="vb" style="margin:3px 0 3px 3px"></div>
+        <div class="rrow"><div class="dd"></div>{{ p.dropoff_name }}</div>
+      </div>
+      <span class="chip {% if p.payment_status == 'COMPLETED' %}c-completed{% elif p.payment_status == 'PENDING' %}c-in-progress{% else %}c-cancelled{% endif %}" style="font-size:10px">{{ p.payment_status }}</span>
+    </div>
+    <div class="rc-b">
+      <div class="chips" style="margin-bottom:8px">
+        <span class="chip c-muted mono">Ride #{{ p.ride_id }}</span>
+        <span class="chip c-muted">{{ p.passenger_name }}</span>
+        <span class="chip c-brand">{{ p.method_name }}</span>
+        {% if p.driver_name %}<span class="chip c-muted">ðŸš— {{ p.driver_name }}</span>{% endif %}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:var(--s2);border-radius:8px;padding:8px">
+          <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700">Amount Due</div>
+          <div style="font-size:16px;font-weight:700;color:var(--brand)">M {{ '%.2f'|format(p.amount_due or 0) }}</div>
+        </div>
+        <div style="background:var(--s2);border-radius:8px;padding:8px">
+          <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700">Amount Paid</div>
+          <div style="font-size:16px;font-weight:700;color:var(--green)">M {{ '%.2f'|format(p.amount_paid or 0) }}</div>
+        </div>
+      </div>
+      <div class="chips" style="margin-top:8px">
+        <span class="chip c-muted">{{ p.ride_status.replace('_',' ') }}</span>
+        <span class="chip c-muted mono">{{ p.passenger_phone }}</span>
+        {% if p.paid_at %}<span class="chip c-muted">{{ p.paid_at|dtfmt }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty"><div class="ei">ðŸ’³</div><div>No payment records found.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block bnav %}
+<nav class="bnav">
+  <a class="bn" href="/admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home</a>
+  <a class="bn" href="/admin/rides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Rides</a>
+  <a class="bn" href="/admin/drivers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Drivers</a>
+  <a class="bn on" href="/admin/payments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Payments</a>
+  <a class="bn" href="/logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+</nav>
+{% endblock %}
